@@ -2,6 +2,7 @@ app-id: com.qq.QQ
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
+branch: liteloader
 base: org.electronjs.Electron2.BaseApp
 base-version: '25.08'
 command: qq
@@ -163,3 +164,20 @@ modules:
           type: html
           url: https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/linuxConfig.js
           pattern: (https:\/\/[a-z0-9]+\.qq\.com\/qqfile\/qq\/QQNT\/Linux\/QQ_([0-9\.]+_[0-9]+)_arm64_[0-9]+\.deb)
+
+  - name: liteloader
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 package.json $FLATPAK_DEST/lib/LiteLoaderQQNT/package.json
+      - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
+      - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
+      - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
+    sources:
+      - type: git
+        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
+        commit: 6f1972d2bc83fe1a1d26e82a49ee15d8cc079018
+        tag: 1.1.1
+        x-checker-data:
+          type: git
+          tag-pattern: "^([\\d.]+)$"
+          is-important: true
