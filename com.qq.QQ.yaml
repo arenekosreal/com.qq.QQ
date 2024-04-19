@@ -168,6 +168,19 @@ modules:
           url: https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/linuxConfig.js
           pattern: (https:\/\/[a-z0-9]+\.qq\.com\/qqfile\/qq\/QQNT\/Linux\/QQ_([0-9\.]+_[0-9]+)_arm64_[0-9]+\.deb)
 
+  - name: kerberos
+    subdir: src
+    sources:
+      - type: archive
+        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.2.tar.gz
+        sha256: 9560941a9d843c0243a71b17a7ac6fe31c7cebb5bce3983db79e52ae7e850491
+        x-checker-data:
+          type: html
+          url: https://kerberos.org/dist/
+          version-pattern: Kerberos V5 Release ([\d\.\-]+) - current release
+          url-template: https://kerberos.org/dist/krb5/$major.$minor/krb5-$version.tar.gz
+          is-important: true
+
   - name: liteloader
     buildsystem: simple
     build-commands:
