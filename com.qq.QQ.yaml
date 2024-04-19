@@ -1,8 +1,8 @@
 app-id: com.qq.QQ
 branch: liteloader
-runtime: org.gnome.Platform
-runtime-version: '46'
-sdk: org.gnome.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
 base: org.electronjs.Electron2.BaseApp
 base-version: '23.08'
 command: qq
@@ -155,6 +155,19 @@ modules:
           type: html
           url: https://im.qq.com/rainbow/linuxQQDownload
           pattern: (https://dldir1.qq.com/qqfile/qq/QQNT/Linux/QQ_([\d\.\_]+)_arm64[^/d]*.deb)
+
+  - name: kerberos
+    subdir: src
+    sources:
+      - type: archive
+        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.2.tar.gz
+        sha256: 9560941a9d843c0243a71b17a7ac6fe31c7cebb5bce3983db79e52ae7e850491
+        x-checker-data:
+          type: html
+          url: https://kerberos.org/dist/
+          version-pattern: Kerberos V5 Release ([\d\.\-]+) - current release
+          url-template: https://kerberos.org/dist/krb5/$major.$minor/krb5-$version.tar.gz
+          is-important: true
 
   - name: liteloader
     buildsystem: simple
