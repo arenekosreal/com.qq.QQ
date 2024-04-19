@@ -1,0 +1,32 @@
+name: Build flatpak manifest
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      # https://github.com/flatpak/flatpak-github-actions?tab=readme-ov-file#docker-image
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
+      options: --privileged
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        arch:
+          - x86_64
+          #- aarch64
+    steps:
+      - uses: actions/checkout@v4
+      # TODO: Fix build on aarch64 architecture
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: com.qq.QQ.Liteloadered-${{ matrix.arch }}.flatpak
+          manifest-path: com.qq.QQ.yaml
+          arch: ${{ matrix.arch }}
+
