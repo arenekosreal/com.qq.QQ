@@ -1,4 +1,5 @@
 app-id: com.qq.QQ
+branch: liteloader
 runtime: org.gnome.Platform
 runtime-version: '46'
 sdk: org.gnome.Sdk
@@ -151,3 +152,20 @@ modules:
           type: html
           url: https://im.qq.com/rainbow/linuxQQDownload
           pattern: (https://dldir1.qq.com/qqfile/qq/QQNT/Linux/QQ_([\d\.\_]+)_arm64[^/d]*.deb)
+
+  - name: liteloader
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 package.json $FLATPAK_DEST/lib/LiteLoaderQQNT/package.json
+      - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
+      - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
+      - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
+    sources:
+      - type: git
+        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
+        commit: 6f1972d2bc83fe1a1d26e82a49ee15d8cc079018
+        tag: 1.1.1
+        x-checker-data:
+          type: git
+          tag-pattern: "^([\\d.]+)$"
+          is-important: true
