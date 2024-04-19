@@ -106,6 +106,7 @@ modules:
         commands:
           - export ZYPAK_LD_PRELOAD="/app/etc/preload/rename.so"
           - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
+          - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
           - declare -a FLAGS
           - |
             if [[ -f "$XDG_CONFIG_HOME/qq-flags.conf" ]]
@@ -131,6 +132,8 @@ modules:
           - bsdtar --to-stdout -xf qq.deb data.* | bsdtar -xf -
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
+          - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
+          - ln -s /app/lib/LiteLoaderQQNT/src/preload.js QQ/resources/app/application/preload.js
         dest-filename: apply_extra
 
       - type: file
