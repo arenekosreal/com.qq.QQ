@@ -7,3 +7,4 @@ Icon=com.qq.QQ
 StartupWMClass=QQ
 Categories=Network;
 Comment=QQ
+MimeType=x-scheme-handler/llqqnt
