@@ -5,6 +5,10 @@ Tencent QQ (Chinese: 腾讯QQ), also known as QQ, is an instant messaging softwa
 
 ## Features
 
+### LiteLoaderQQNT
+
+This is a third-party program which allows you load plugins to extend QQ and remove useless features as you need.
+
 ### Wayland
 
 This package enables the flags to run on Wayland, however it is opt-in. To opt-in run:
