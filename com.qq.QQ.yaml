@@ -191,8 +191,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: 6f1972d2bc83fe1a1d26e82a49ee15d8cc079018
-        tag: 1.1.1
+        commit: 5fa38998a4b2441cd8ffd17221ca1a99929555a1
+        tag: 1.1.2
         x-checker-data:
           type: git
           tag-pattern: "^([\\d.]+)$"
