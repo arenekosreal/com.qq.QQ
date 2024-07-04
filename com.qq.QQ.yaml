@@ -11,7 +11,8 @@ separate-locales: false
 finish-args:
   - --share=ipc
   - --share=network
-  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
   - --socket=pulseaudio
   - --device=all
   - --filesystem=xdg-download
