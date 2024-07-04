@@ -11,14 +11,9 @@ This is a third-party program which allows you load plugins to extend QQ and rem
 
 ### Wayland
 
-This package enables the flags to run on Wayland, however it is opt-in. To opt-in run:
+This package enables the flags to run on Wayland and it should work out-of-the-box.
 
-```sh
-flatpak override --user --socket=wayland com.qq.QQ
-```
-
-To opt-out do the same with `--nosocket=wayland`.
-
+This package also can fallback to X11 when Wayland is not available.
 
 ## Legality
 
