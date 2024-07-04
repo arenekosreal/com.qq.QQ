@@ -122,7 +122,7 @@ modules:
                 *) FLAGS+=" --wayland-text-input-version=3" ;;
               esac
             fi
-          - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
+          - export LITELOADERQQNT_PROFILE="${LITELOADERQQNT_PROFILE:-$XDG_CONFIG_HOME/LiteLoaderQQNT}"
           - exec zypak-wrapper /app/extra/QQ/qq $FLAGS "$@"
         dest-filename: qq.sh
 
