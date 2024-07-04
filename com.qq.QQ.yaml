@@ -24,7 +24,6 @@ finish-args:
   - --talk-name=org.freedesktop.Notifications
   - --talk-name=org.kde.StatusNotifierWatcher
   - --system-talk-name=org.freedesktop.login1
-  - --filesystem=xdg-run/pipewire-0
 
   # D-Bus Access
   - --talk-name=org.freedesktop.Notifications
