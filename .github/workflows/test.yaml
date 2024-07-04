@@ -26,7 +26,8 @@ jobs:
       # TODO: Fix build on aarch64 architecture
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: com.qq.QQ.Liteloadered-${{ matrix.arch }}.flatpak
+          bundle: com.qq.QQ.flatpak
           manifest-path: com.qq.QQ.yaml
           arch: ${{ matrix.arch }}
+          branch: liteloader
 
