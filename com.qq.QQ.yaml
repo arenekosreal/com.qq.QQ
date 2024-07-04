@@ -118,7 +118,7 @@ modules:
               echo "Adding X11 related flags..."
               FLAGS+=(--ozone-platform=x11)
             fi
-          - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
+          - export LITELOADERQQNT_PROFILE="${LITELOADERQQNT_PROFILE:-$XDG_CONFIG_HOME/LiteLoaderQQNT}"
           - exec zypak-wrapper /app/extra/QQ/qq $FLAGS "$@"
         dest-filename: qq.sh
 
