@@ -119,7 +119,10 @@ modules:
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
           - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
-          - ln -s /app/lib/LiteLoaderQQNT/src/preload.js QQ/resources/app/application/preload.js
+          - for file in /app/lib/LiteLoaderQQNT/patch/preload*.js
+          - do
+          -  ln -s $file QQ/resources/app/application/$(basename $file)
+          - done
         dest-filename: apply_extra
 
       - type: file
@@ -174,12 +177,25 @@ modules:
       - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
+      - install -Dvm644 -t $FLATPAK_DEST/lib/LiteLoaderQQNT/patch preload*.js
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: 5fa38998a4b2441cd8ffd17221ca1a99929555a1
-        tag: 1.1.2
+        commit: 6a059f52eaf6b9875f0a64bd0d35e992c6849978
+        tag: 1.2.0
         x-checker-data:
           type: git
           tag-pattern: "^([\\d.]+)$"
           is-important: true
+
+      - type: file
+        path: patch/preload_login.js
+
+      - type: file
+        path: patch/preload_webview.js
+
+      - type: file
+        path: patch/preload.js
+
+      - type: file
+        path: patch/preloadAux.js
