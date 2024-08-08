@@ -137,9 +137,12 @@ modules:
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
           - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
-          - for file in /app/lib/LiteLoaderQQNT/patch/preload*.js
+          - for file in /app/lib/LiteLoaderQQNT/patch/*preload*.js
           - do
-          -  ln -s $file QQ/resources/app/application/$(basename $file)
+          -   preload=/app/lib/LiteLoaderQQNT/src/preload.js
+          -   target="./QQ/resources/app/application/$(basename $file)"
+          -   echo "Injecting $preload into $target..."
+          -   printf "%s\n%s" "$(< $preload)" "$( <$file)" > "$target"
           - done
         dest-filename: apply_extra
 
