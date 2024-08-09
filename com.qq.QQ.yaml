@@ -198,7 +198,7 @@ modules:
       - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
-      - install -Dvm644 -t $FLATPAK_DEST/lib/LiteLoaderQQNT/patch preload*.js
+      - install -Dvm644 -t $FLATPAK_DEST/lib/LiteLoaderQQNT/patch *preload*.js
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
@@ -220,3 +220,6 @@ modules:
 
       - type: file
         path: patch/preloadAux.js
+
+      - type: file
+        path: patch/preload_simple.js
