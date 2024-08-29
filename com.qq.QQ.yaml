@@ -136,14 +136,7 @@ modules:
           - bsdtar --to-stdout -xf qq.deb data.* | bsdtar -xf -
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
-          - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
-          - for file in /app/lib/LiteLoaderQQNT/patch/*preload*.js
-          - do
-          -   preload=/app/lib/LiteLoaderQQNT/src/preload.js
-          -   target="./QQ/resources/app/application/$(basename $file)"
-          -   echo "Injecting $preload into $target..."
-          -   printf "%s\n%s" "$(< $preload)" "$( <$file)" > "$target"
-          - done
+          - patch_qq
         dest-filename: apply_extra
 
       - type: file
@@ -198,6 +191,7 @@ modules:
       - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
+      - install -Dm755 patch_qq $FLATPAK_DEST/bin/patch_qq
       - install -Dvm644 -t $FLATPAK_DEST/lib/LiteLoaderQQNT/patch *preload*.js
     sources:
       - type: git
@@ -208,6 +202,19 @@ modules:
           type: git
           tag-pattern: "^([\\d.]+)$"
           is-important: true
+
+      - type: script
+        commands:
+          - echo Applying modifications to QQ...
+          - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
+          - for file in /app/lib/LiteLoaderQQNT/patch/*preload*.js
+          - do
+          -   preload=/app/lib/LiteLoaderQQNT/src/preload.js
+          -   target="./QQ/resources/app/application/$(basename $file)"
+          -   echo "Injecting $preload into $target..."
+          -   printf "%s\n%s" "$(< $preload)" "$( <$file)" > "$target"
+          - done
+        dest-filename: patch_qq
 
       - type: file
         path: patch/preload_login.js
