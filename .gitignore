@@ -1,3 +1,4 @@
 *.flatpak*
 build
-*preload*.js
+preloads*.tar.gz
+*.deb
