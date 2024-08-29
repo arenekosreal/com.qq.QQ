@@ -192,7 +192,8 @@ modules:
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
       - install -Dm755 patch_qq $FLATPAK_DEST/bin/patch_qq
-      - install -Dvm644 -t $FLATPAK_DEST/lib/LiteLoaderQQNT/patch *preload*.js
+      - bsdtar -xf preloads.tar.gz
+      - cp -rv --no-preserve=ownership preloads $FLATPAK_DEST/lib/LiteLoaderQQNT/preloads-origin
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
@@ -207,26 +208,15 @@ modules:
         commands:
           - echo Applying modifications to QQ...
           - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
-          - for file in /app/lib/LiteLoaderQQNT/patch/*preload*.js
+          - for file in /app/lib/LiteLoaderQQNT/preloads-origin/*preload*.js
           - do
           -   preload=/app/lib/LiteLoaderQQNT/src/preload.js
           -   target="./QQ/resources/app/application/$(basename $file)"
           -   echo "Injecting $preload into $target..."
-          -   printf "%s\n%s" "$(< $preload)" "$( <$file)" > "$target"
+          -   printf "%s\n{%s}" "$(< $preload)" "$( <$file)" > "$target"
           - done
         dest-filename: patch_qq
 
       - type: file
-        path: patch/preload_login.js
-
-      - type: file
-        path: patch/preload_webview.js
-
-      - type: file
-        path: patch/preload.js
-
-      - type: file
-        path: patch/preloadAux.js
-
-      - type: file
-        path: patch/preload_simple.js
+        path: preloads-3.2.12_240819.tar.gz
+        dest-filename: preloads.tar.gz
