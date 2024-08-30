@@ -45,12 +45,14 @@ jobs:
           _url=$(echo "$_qq" | jq -r ".[0].url")
           _version=$(echo "${_url##*/}" | cut -d _ -f 2,3)
           echo "version=$_version" >> $GITHUB_OUTPUT
-      - name: Cache QQ-${{ steps.qq-version.outputs.version }} deb
+      - name: Cache preloads-${{ steps.qq-version.outputs.version }}.tar.gz
         uses: actions/cache@v4
+        id: cache
         with:
-          path: qq-${{ steps.qq-version.outputs.version }}.deb
+          path: preloads-${{ steps.qq-version.outputs.version }}.tar.gz
           key: ${{ matrix.arch }}-${{ steps.qq-version.outputs.version }}
       - name: Generate preloads
+        if: steps.cache.outputs.cache-hit != 'true'
         run: bash extract-preloads.sh
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
