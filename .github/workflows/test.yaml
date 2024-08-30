@@ -32,8 +32,6 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
-      - name: Install missing depends
-        run: dnf -y install jq bsdtar nss at-spi2-atk cups-libs gtk3 mesa-libgbm
       - name: Get QQ version in manifest
         id: qq-version
         shell: bash
@@ -51,6 +49,9 @@ jobs:
         with:
           path: preloads-${{ steps.qq-version.outputs.version }}.tar.gz
           key: ${{ matrix.arch }}-${{ steps.qq-version.outputs.version }}
+      - name: Install missing depends to run QQ
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: dnf -y install jq bsdtar nss at-spi2-atk cups-libs gtk3 mesa-libgbm
       - name: Generate preloads
         if: steps.cache.outputs.cache-hit != 'true'
         run: bash extract-preloads.sh
