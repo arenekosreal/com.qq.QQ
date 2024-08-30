@@ -32,8 +32,11 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
+      - name: Install missing depends
+        run: dnf -y install jq bsdtar nss at-spi2-atk cups-libs gtk3 mesa-libgbm
       - name: Get QQ version in manifest
         id: qq-version
+        shell: bash
         run: |
           _arch=$(flatpak --default-arch)
           _manifest=$(flatpak-builder --show-manifest com.qq.QQ.yaml)
@@ -42,10 +45,10 @@ jobs:
           _url=$(echo "$_qq" | jq -r ".[0].url")
           _version=$(echo "${_url##*/}" | cut -d _ -f 2,3)
           echo "version=$_version" >> $GITHUB_OUTPUT
-      - name: Cache QQ deb
+      - name: Cache QQ-${{ steps.qq-version.outputs.version }} deb
         uses: actions/cache@v4
         with:
-          path: qq*.deb
+          path: qq-${{ steps.qq-version.outputs.version }}.deb
           key: ${{ matrix.arch }}-${{ steps.qq-version.outputs.version }}
       - name: Generate preloads
         run: bash extract-preloads.sh
