@@ -32,6 +32,23 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
+      - name: Get QQ version in manifest
+        id: qq-version
+        run: |
+          _arch=$(flatpak --default-arch)
+          _manifest=$(flatpak-builder --show-manifest com.qq.QQ.yaml)
+          _extra_datas=$(echo "$_manifest" | jq -r ".modules[].sources | map(select(.type == \"extra-data\")) | select(length > 0)")
+          _qq=$(echo "$_extra_datas" | jq -r "map(select(.\"only-arches\" | contains([\"$_arch\"])))")
+          _url=$(echo "$_qq" | jq -r ".[0].url")
+          _version=$(echo "${_url##*/}" | cut -d _ -f 2,3)
+          echo "version=$_version" >> $GITHUB_OUTPUT
+      - name: Cache QQ deb
+        uses: actions/cache@v4
+        with:
+          path: qq*.deb
+          key: ${{ matrix.arch }}-${{ steps.qq-version.outputs.version }}
+      - name: Generate preloads
+        run: bash extract-preloads.sh
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: com.qq.QQ.flatpak
