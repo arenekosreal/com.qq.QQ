@@ -2,6 +2,8 @@
 
 Tencent QQ (Chinese: 腾讯QQ), also known as QQ, is an instant messaging software service and web portal developed by the Chinese technology company Tencent.
 
+[![Build flatpak manifest](https://github.com/arenekosreal/com.qq.QQ/actions/workflows/test.yaml/badge.svg)](https://github.com/arenekosreal/com.qq.QQ/actions/workflows/test.yaml)
+
 ## Features
 
 ### LiteLoaderQQNT
