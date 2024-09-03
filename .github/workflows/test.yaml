@@ -57,6 +57,9 @@ jobs:
       - name: Generate preloads
         if: steps.cache.outputs.cache-hit != 'true'
         run: bash extract-preloads.sh
+      - name: Link preloads
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: ln -srfv preloads-${{ steps.qq-version.outputs.version }}.tar.gz preloads.tar.gz
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: com.qq.QQ.flatpak
