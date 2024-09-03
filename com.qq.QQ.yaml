@@ -200,5 +200,4 @@ modules:
         dest-filename: patch_qq
 
       - type: file
-        path: preloads-3.2.12_240819.tar.gz
-        dest-filename: preloads.tar.gz
+        path: preloads.tar.gz
