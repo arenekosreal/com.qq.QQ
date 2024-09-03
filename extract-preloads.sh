@@ -16,6 +16,7 @@ FIND=${FIND:-find}
 CUT=${CUT:-cut}
 REALPATH=${REALPATH:-realpath}
 DIRNAME=${DIRNAME:-dirname}
+LN=${LN:-ln -srfv}
 # FLATPAK_BUILDER_ARGS
 BUILD_DIR=${BUILD_DIR:-build}
 MANIFEST=${MANIFEST:-com.qq.QQ.yaml}
@@ -100,6 +101,7 @@ then
     $ECHO "Extract preloads successfully."
     $ECHO "Creating archive..."
     $BSDTAR -C "$_TMP_REPO" -cf "$_TMP_PRELOADS_ARCHIVE" "$($REALPATH --relative-to="$_TMP_REPO" "$_TMP_REPO_PRELOADS_DIR")"
+    $LN "$_TMP_PRELOADS_ARCHIVE" "$_TMP_PRELOADS_ARCHIVE_NO_VERSION"
     $ECHO "Cleaning up temp files..."
     $RM "$_TMP_QQ_DEB" "opt" "usr" "$_TMP_REPO_PRELOADS_DIR"
     if "$_TMP_REMOVE_DOTCONFIG_QQ"
