@@ -17,6 +17,7 @@ CUT=${CUT:-cut}
 REALPATH=${REALPATH:-realpath}
 DIRNAME=${DIRNAME:-dirname}
 LN=${LN:-ln -srfv}
+MKTEMP=${MKTEMP:-mktemp -d}
 # FLATPAK_BUILDER_ARGS
 BUILD_DIR=${BUILD_DIR:-build}
 MANIFEST=${MANIFEST:-com.qq.QQ.yaml}
@@ -74,17 +75,10 @@ declare _TMP_REPO_PRELOADS_DIR="$_TMP_REPO/preloads"
 $ECHO "Removing $_TMP_REPO_PRELOADS_DIR folder..."
 $RM "$_TMP_REPO_PRELOADS_DIR"
 
-declare _TMP_REMOVE_DOTCONFIG_QQ
-declare XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-if [[ -d "$XDG_CONFIG_HOME/QQ" ]]
-then
-    _TMP_REMOVE_DOTCONFIG_QQ=false
-else
-    _TMP_REMOVE_DOTCONFIG_QQ=true
-fi
-
 $ECHO "Launching modified QQ..."
-"$_TMP_QQ_DIR/qq" --no-sandbox "$_TMP_QQ_RESOURCES"
+declare _TMP_QQ_HOME
+_TMP_QQ_HOME=$($MKTEMP)
+HOME="$_TMP_QQ_HOME" "$_TMP_QQ_DIR/qq" --no-sandbox "$_TMP_QQ_RESOURCES"
 
 if [[ ! -d "$_TMP_REPO_PRELOADS_DIR" ]]
 then
@@ -104,10 +98,7 @@ then
     $LN "$_TMP_PRELOADS_ARCHIVE" "$_TMP_PRELOADS_ARCHIVE_NO_VERSION"
     $ECHO "Cleaning up temp files..."
     $RM "$_TMP_QQ_DEB" "opt" "usr" "$_TMP_REPO_PRELOADS_DIR"
-    if "$_TMP_REMOVE_DOTCONFIG_QQ"
-    then
-        $RM "$XDG_CONFIG_HOME/QQ"
-    fi
+    $RM "$_TMP_QQ_HOME"
     $EXIT 0
 fi
 
