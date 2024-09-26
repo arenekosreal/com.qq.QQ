@@ -192,13 +192,11 @@ modules:
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
       - install -Dm755 patch_qq $FLATPAK_DEST/bin/patch_qq
-      - bsdtar -xf preloads.tar.gz
-      - cp -rv --no-preserve=ownership preloads $FLATPAK_DEST/lib/LiteLoaderQQNT/preloads-origin
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: bd5a9fb16ecfd25adc9d2b760f943582dbb7f531
-        tag: 1.2.1
+        commit: 3e8bcb3aa3af4532c52eb5a77626d8573980e7b1
+        tag: 1.2.2
         x-checker-data:
           type: git
           tag-pattern: "^([\\d.]+)$"
@@ -207,15 +205,6 @@ modules:
       - type: script
         commands:
           - echo Applying modifications to QQ...
-          - sed -i '1 i require("/app/lib/LiteLoaderQQNT");' QQ/resources/app/app_launcher/index.js
-          - for file in /app/lib/LiteLoaderQQNT/preloads-origin/*preload*.js
-          - do
-          -   preload=/app/lib/LiteLoaderQQNT/src/preload.js
-          -   target="./QQ/resources/app/application/$(basename $file)"
-          -   echo "Injecting $preload into $target..."
-          -   printf "%s\n{%s}" "$(< $preload)" "$( <$file)" > "$target"
-          - done
+          - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/loader.js
+          - sed -i 's|./application/app_launcher/index.js|./app_launcher/loader.js|' QQ/resources/app/package.json
         dest-filename: patch_qq
-
-      - type: file
-        path: preloads.tar.gz
