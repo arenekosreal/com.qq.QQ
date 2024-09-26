@@ -32,34 +32,6 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
-      - name: Install missing depends to get QQ version
-        run: dnf -y install jq
-      - name: Get QQ version in manifest
-        id: qq-version
-        shell: bash
-        run: |
-          _arch=$(flatpak --default-arch)
-          _manifest=$(flatpak-builder --show-manifest com.qq.QQ.yaml)
-          _extra_datas=$(echo "$_manifest" | jq -r ".modules[].sources | map(select(.type == \"extra-data\")) | select(length > 0)")
-          _qq=$(echo "$_extra_datas" | jq -r "map(select(.\"only-arches\" | contains([\"$_arch\"])))")
-          _url=$(echo "$_qq" | jq -r ".[0].url")
-          _version=$(echo "${_url##*/}" | cut -d _ -f 2,3)
-          echo "version=$_version" >> $GITHUB_OUTPUT
-      - name: Cache preloads-${{ steps.qq-version.outputs.version }}.tar.gz
-        uses: actions/cache@v4
-        id: cache
-        with:
-          path: preloads-${{ steps.qq-version.outputs.version }}.tar.gz
-          key: ${{ matrix.arch }}-${{ steps.qq-version.outputs.version }}
-      - name: Install missing depends to run QQ
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: dnf -y install bsdtar nss at-spi2-atk cups-libs gtk3 mesa-libgbm
-      - name: Generate preloads
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: bash extract-preloads.sh
-      - name: Link preloads
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: ln -srfv preloads-${{ steps.qq-version.outputs.version }}.tar.gz preloads.tar.gz
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: com.qq.QQ.flatpak
