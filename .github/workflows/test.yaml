@@ -2,10 +2,10 @@ name: Build flatpak manifest
 on:
   pull_request:
     branches:
-      - master
+      - liteloader
   push:
     branches:
-      - master
+      - liteloader
   workflow_dispatch:
 jobs:
   test:
