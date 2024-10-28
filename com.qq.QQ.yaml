@@ -20,7 +20,6 @@ finish-args:
 
   # Filesystems
   - --device=all
-  - --talk-name=org.gnome.Shell.Screencast
   - --talk-name=org.freedesktop.Notifications
   - --talk-name=org.kde.StatusNotifierWatcher
   - --system-talk-name=org.freedesktop.login1
