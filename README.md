@@ -39,6 +39,11 @@ Also, you could use another way to achieve this if you don't like unfree.
 
 This may save some space especially when you are not using other gnome applications in flatpak.
 
+### Unsafe permissions removed
+
+Unsafe permissions like accessing `/tmp` of host, or using `--device=all` are removed.
+Most of those should be performed through xdg-desktop-portal instead using those permissions.
+
 ## Disadvantages
 
 ### Screenshot
@@ -56,6 +61,15 @@ the modified manifest with flatpak-builder.
 
 There maybe another solution that you can build gjs and its dependencies yourself. 
 But that is going to be a hard story because you have to build mozjs, which build workflow is similar to firefox.
+
+### Camera
+
+Due to that QQ access camera devices directly and we only expose `--device=dri`, QQ will not find your camera devices.
+We will test adding `--device=usb` as many of those camera devices are connected to host through USB bus, 
+even integrated one. But `--device=usb` is only available since flatpak version 1.15.11 so you have to wait for some time.
+If you still want to use camera, you can revert 
+[1b4f106](https://github.com/arenekosreal/com.qq.QQ/commit/1b4f1062bc786f4dbc34f0d11667d4ad7a91456f) and rebuild 
+the modified manifest with flatpak-builder.
 
 ## Legality
 
