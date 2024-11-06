@@ -195,8 +195,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: 3e8bcb3aa3af4532c52eb5a77626d8573980e7b1
-        tag: 1.2.2
+        commit: 745e89ccd4469510c3b96fcfb21dd8026629eec8
+        tag: 1.2.3
         x-checker-data:
           type: git
           tag-pattern: "^([\\d.]+)$"
@@ -205,6 +205,7 @@ modules:
       - type: script
         commands:
           - echo Applying modifications to QQ...
-          - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/loader.js
-          - sed -i 's|./application/app_launcher/index.js|./app_launcher/loader.js|' QQ/resources/app/package.json
+          - entrypoint=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
+          - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/$entrypoint.js
+          - sed -i "s|./application.asar/app_launcher/index.js|./app_launcher/$entrypoint.js|" QQ/resources/app/package.json
         dest-filename: patch_qq
