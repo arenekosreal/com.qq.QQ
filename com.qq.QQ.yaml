@@ -207,5 +207,5 @@ modules:
           - echo Applying modifications to QQ...
           - entrypoint=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
           - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/$entrypoint.js
-          - sed -i "s|./application.asar/app_launcher/index.js|./app_launcher/$entrypoint.js|" QQ/resources/app/package.json
+          - sed -i "s|\"main\":\ \".*\",|\"main\":\ \"./app_launcher/$entrypoint.js\",|" QQ/resources/app/package.json
         dest-filename: patch_qq
