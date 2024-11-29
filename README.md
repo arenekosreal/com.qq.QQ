@@ -71,6 +71,10 @@ If you still want to use camera, you can revert
 [1b4f106](https://github.com/arenekosreal/com.qq.QQ/commit/1b4f1062bc786f4dbc34f0d11667d4ad7a91456f) and rebuild 
 the modified manifest with flatpak-builder.
 
+Update: We found that QQ still cannot found integrated camera even `--device=usb` is added. What's more, 
+according to [here](https://github.com/flatpak/flatpak/issues/1715), using pipewire is prefered to access
+video devices. So we think if you still want to using camera, you have to revert commit mentioned above.
+
 ## Legality
 
 The QQ app itself is **proprietary** (closed source).
