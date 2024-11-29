@@ -75,6 +75,8 @@ Update: We found that QQ still cannot found integrated camera even `--device=usb
 according to [here](https://github.com/flatpak/flatpak/issues/1715), using pipewire is prefered to access
 video devices. So we think if you still want to using camera, you have to revert commit mentioned above.
 
+P.S: You can check [here](https://github.com/electron/electron/issues/42608) for more info.
+
 ## Legality
 
 The QQ app itself is **proprietary** (closed source).
