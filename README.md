@@ -10,10 +10,6 @@ Tencent QQ (Chinese: 腾讯QQ), also known as QQ, is an instant messaging softwa
 
 This is a third-party program which allows you load plugins to extend QQ and remove useless features as you need.
 
-### Freedesktop Runtime
-
-This may save some space especially when you are not using other gnome applications in flatpak.
-
 ### Unsafe permissions removed
 
 Unsafe permissions like accessing `/tmp` of host, or using `--device=all` are removed.
@@ -22,6 +18,13 @@ Most of those should be performed through xdg-desktop-portal instead using those
 ## Disadvantages
 
 ### Screenshot
+
+> [!NOTE]
+> Upstream has also [switched to freedesktop runtime](https://github.com/flathub/com.qq.QQ/pull/124), which means that screenshot feature is abandoned.
+
+<details>
+
+<summary>Detail status of screenshot feature</summary>
 
 Due to that QQ uses `gjs` to talk to dbus name `org.gnome.Shell.Screencast`, 
 while `gjs` is not available with freedesktop runtime, permission to talk to `org.gnome.Shell.Screencast` is removed.
@@ -36,6 +39,8 @@ the modified manifest with flatpak-builder.
 
 There maybe another solution that you can build gjs and its dependencies yourself. 
 But that is going to be a hard story because you have to build mozjs, which build workflow is similar to firefox.
+
+</details>
 
 ### Camera
 
