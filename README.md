@@ -10,31 +10,6 @@ Tencent QQ (Chinese: 腾讯QQ), also known as QQ, is an instant messaging softwa
 
 This is a third-party program which allows you load plugins to extend QQ and remove useless features as you need.
 
-## For NixOS Users
-
-As NixOS not obey FHS(Filesystem Hierarchy Standard), and this project require a FHS enviroment to finish some process.
-
-A simple way is install a Steam (*unfree software*).
-
-```nix
-# configuration.nix
-
-{
-  pkgs,
-  config,
-  ...
-}: {
-  programs.steam = {
-    enable = true;
-    package = pkgs.steam;
-  };
-}
-```
-
-After rebuild, Steam provide `steam-run` that run a program in FHS enviroment.
-Therefore, you could use `steam-run bash` to use this project.
-Also, you could use another way to achieve this if you don't like unfree.
-
 ### Freedesktop Runtime
 
 This may save some space especially when you are not using other gnome applications in flatpak.
