@@ -9,7 +9,7 @@ command: qq
 separate-locales: false
 
 finish-args:
-  - --device=all
+  - --device=dri
 
   - --share=ipc
   - --share=network
@@ -19,10 +19,6 @@ finish-args:
   - --socket=pulseaudio
 
   # Filesystems
-  - --device=dri
-  - --talk-name=org.freedesktop.Notifications
-  - --talk-name=org.kde.StatusNotifierWatcher
-  - --system-talk-name=org.freedesktop.login1
 
   # D-Bus Access
   - --talk-name=org.freedesktop.Notifications
