@@ -177,11 +177,11 @@ modules:
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: 745e89ccd4469510c3b96fcfb21dd8026629eec8
-        tag: 1.2.3
+        commit: 9c921aeb98ea998ea773a9cc7199c224febb6984
+        tag: 1.2.4
         x-checker-data:
           type: git
-          tag-pattern: "^([\\d.]+)$"
+          tag-pattern: "^([\\d.]+\\d)$"
           is-important: true
 
       - type: script
