@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
     container:
       # https://github.com/flatpak/flatpak-github-actions?tab=readme-ov-file#docker-image
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
@@ -18,24 +18,22 @@ jobs:
       contents: read
     strategy:
       matrix:
-        arch:
-          - x86_64
-          - aarch64
+        runs-on:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
-      - name: Install deps
-        if: ${{ matrix.arch == 'aarch64' }}
-        run: dnf -y install docker
-      - name: Setup QEMU
-        if: ${{ matrix.arch == 'aarch64' }}
-        id: qemu
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
+      - run: |
+          {
+            echo -n "arch="
+            uname -m
+          } >> "$GITHUB_OUTPUT"
+        id: arch
+          
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: com.qq.QQ.flatpak
+          bundle: com.qq.QQ-${{ steps.arch.outputs.arch }}.flatpak
           manifest-path: com.qq.QQ.yaml
-          arch: ${{ matrix.arch }}
+          arch: ${{ steps.arch.outputs.arch }}
           branch: liteloader
 
