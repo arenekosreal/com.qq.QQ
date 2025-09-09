@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     container:
       # https://github.com/flatpak/flatpak-github-actions?tab=readme-ov-file#docker-image
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     permissions:
       contents: read
