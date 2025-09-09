@@ -113,7 +113,8 @@ modules:
               FLAGS+=(--ozone-platform=x11)
             fi
           - export LITELOADERQQNT_PROFILE="${LITELOADERQQNT_PROFILE:-$XDG_CONFIG_HOME/LiteLoaderQQNT}"
-          - exec zypak-wrapper /app/extra/QQ/qq $FLAGS "$@"
+          - echo "Pass \`${FLAGS[*]}\` to main process..."
+          - exec zypak-wrapper /app/extra/QQ/qq "${FLAGS[@]}" "$@"
         dest-filename: qq.sh
 
       - type: script
