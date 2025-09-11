@@ -106,14 +106,7 @@ modules:
     sources:
       - type: script
         commands:
-          - mkdir -p "$XDG_CONFIG_HOME/v8_killer"
-          - |
-            if ! [[ -e "$XDG_CONFIG_HOME/v8_killer/core.toml" ]]
-            then
-              echo "v8 killer config is not found at $XDG_CONFIG/v8_killer/core.toml."
-              exit 1
-            fi
-          - export V8_KILLER_CONFIG_FILE_PATH="$XDG_CONFIG_HOME/v8_killer/core.toml"
+          - export V8_KILLER_CONFIG_FILE_PATH="/app/lib/LiteLoaderQQNT/v8_killer.toml"
           - export ZYPAK_LD_PRELOAD="/app/etc/preload/rename.so /app/lib/v8_killer/libv8_killer_core.so"
           - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
           - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
@@ -142,7 +135,6 @@ modules:
           - bsdtar --to-stdout -xf qq.deb data.* | bsdtar -xf -
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
-          - patch_qq
         dest-filename: apply_extra
 
       - type: file
@@ -184,7 +176,7 @@ modules:
       - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
       - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
       - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
-      - install -Dm755 patch_qq $FLATPAK_DEST/bin/patch_qq
+      - install -Dm644 v8_killer.toml $FLATPAK_DEST/lib/LiteLoaderQQNT/v8_killer.toml
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
@@ -195,13 +187,8 @@ modules:
           tag-pattern: "^(\\d+\\.\\d+\\.\\d+)$"
           is-important: true
 
-      - type: script
-        commands:
-          - echo Applying modifications to QQ...
-          - entrypoint=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
-          - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/$entrypoint.js
-          - sed -i "s|\"main\":\ \".*\",|\"main\":\ \"./app_launcher/$entrypoint.js\",|" QQ/resources/app/package.json
-        dest-filename: patch_qq
+      - type: file
+        path: v8_killer.toml
 
   - name: v8_killer
     buildsystem: simple
