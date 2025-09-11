@@ -110,7 +110,7 @@ modules:
           - |
             if [[ -f "$XDG_CONFIG_HOME/qq-flags.conf" ]]
             then
-              echo "Reading user defined flags from $XDG_CONFIG_HOME/qq-flags.conf..."
+              echo "User defined flags found, reading from $XDG_CONFIG_HOME/qq-flags.conf only."
               readarray -t FLAGS <"$XDG_CONFIG_HOME/qq-flags.conf"
             else
               echo "Adding default flags..."
