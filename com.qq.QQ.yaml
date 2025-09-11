@@ -3,6 +3,9 @@ runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 branch: liteloader
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.llvm20
 base: org.electronjs.Electron2.BaseApp
 base-version: '25.08'
 command: qq
@@ -103,7 +106,15 @@ modules:
     sources:
       - type: script
         commands:
-          - export ZYPAK_LD_PRELOAD="/app/etc/preload/rename.so"
+          - mkdir -p "$XDG_CONFIG_HOME/v8_killer"
+          - |
+            if ! [[ -e "$XDG_CONFIG_HOME/v8_killer/core.toml" ]]
+            then
+              echo "v8 killer config is not found at $XDG_CONFIG/v8_killer/core.toml."
+              exit 1
+            fi
+          - export V8_KILLER_CONFIG_FILE_PATH="$XDG_CONFIG_HOME/v8_killer/core.toml"
+          - export ZYPAK_LD_PRELOAD="/app/etc/preload/rename.so /app/lib/v8_killer/libv8_killer_core.so"
           - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
           - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
           - declare -a FLAGS
@@ -191,3 +202,29 @@ modules:
           - echo 'require("/app/lib/LiteLoaderQQNT");' > QQ/resources/app/app_launcher/$entrypoint.js
           - sed -i "s|\"main\":\ \".*\",|\"main\":\ \"./app_launcher/$entrypoint.js\",|" QQ/resources/app/package.json
         dest-filename: patch_qq
+
+  - name: v8_killer
+    buildsystem: simple
+    build-commands:
+      - cargo fetch --offline --manifest-path Cargo.toml --verbose
+      - cargo build --offline --release --all-features
+      - install -Dm644 target/release/libv8_killer_core.so $FLATPAK_DEST/lib/v8_killer/libv8_killer_core.so
+      - install -Dm755 target/release/v8_killer_launcher $FLATPAK_DEST/lib/v8_killer/v8_killer_launcher
+      - mkdir -p $FLATPAK_DEST/bin
+      - ln -srfv $FLATPAK_DEST/lib/v8_killer/v8_killer_launcher $FLATPAK_DEST/bin/v8_killer_launcher
+    build-options:
+      append-path: "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm20/bin"
+      env:
+        CARGO_HOME: /run/build/v8_killer/cargo
+        CARGO_NET_OFFLINE: 'true'
+    sources:
+      - type: git
+        url: https://github.com/ShellWen/v8_killer.git
+        commit: ceff3894dff0b21945a6a3072a73b4021fa9f017
+
+      - type: file
+        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-x86_64.tar.xz
+        sha256: 65c8b91600028beb26204304f6f1ab25a9677fbe0bbfb94b71035fbb97765c5f
+        dest: target/release/build/frida-gum-sys-fb1cac4e1e806452/out
+
+      - cargo-sources.json
