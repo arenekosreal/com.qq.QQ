@@ -1,0 +1,7 @@
+[rules.liteloaderqqnt]
+matcher.type = "resource-name-keyword"
+matcher.keyword = "app_launcher/index.js"
+
+[[rules.liteloaderqqnt.processors]]
+type = "insert-before"
+content = "require('/app/lib/LiteLoaderQQNT');"
