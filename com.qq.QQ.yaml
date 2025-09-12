@@ -219,7 +219,7 @@ modules:
       - type: file
         url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-arm64.tar.xz
         sha256: b64d38cfc9375c2380a107d6f09fd44aa41cb782cd2c10319de4ec9c2003c47b
-        dest: target/release/build/frida-gum-sys-fb1cac4e1e806452/out
+        dest: target/release/build/frida-gum-sys-1006a64ef61be8db/out
         only-arches:
           - aarch64
 
