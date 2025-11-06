@@ -220,18 +220,6 @@ modules:
         url: https://github.com/ShellWen/v8_killer.git
         commit: ceff3894dff0b21945a6a3072a73b4021fa9f017
 
-      - type: file
-        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-x86_64.tar.xz
-        sha256: 65c8b91600028beb26204304f6f1ab25a9677fbe0bbfb94b71035fbb97765c5f
-        dest: target/release/build/frida-gum-sys-f5aedfab69b316ec/out
-        only-arches:
-          - x86_64
-
-      - type: file
-        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-arm64.tar.xz
-        sha256: b64d38cfc9375c2380a107d6f09fd44aa41cb782cd2c10319de4ec9c2003c47b
-        dest: target/release/build/frida-gum-sys-8e59fda3edb8d54e/out
-        only-arches:
-          - aarch64
+      - frida-gum-sys-assets.json
 
       - cargo-sources.json
