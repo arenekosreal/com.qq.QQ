@@ -109,7 +109,7 @@ modules:
     sources:
       - type: script
         commands:
-          - export V8_KILLER_CONFIG_FILE_PATH="/app/lib/LiteLoaderQQNT/v8_killer.toml"
+          - export V8_KILLER_CONFIG_FILE_PATH="/app/lib/node_modules/LiteLoaderQQNT/v8_killer.toml"
           - export ZYPAK_LD_PRELOAD="/app/etc/preload/rename.so /app/lib/v8_killer/libv8_killer_core.so"
           - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
           - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
@@ -183,11 +183,8 @@ modules:
   - name: liteloader
     buildsystem: simple
     build-commands:
-      - install -Dm644 package.json $FLATPAK_DEST/lib/LiteLoaderQQNT/package.json
-      - install -Dm644 LICENSE $FLATPAK_DEST/lib/LiteLoaderQQNT/LICENSE
-      - install -Dm644 README.md $FLATPAK_DEST/lib/LiteLoaderQQNT/README.md
-      - cp -r src $FLATPAK_DEST/lib/LiteLoaderQQNT/src
-      - install -Dm644 v8_killer.toml $FLATPAK_DEST/lib/LiteLoaderQQNT/v8_killer.toml
+      - install -Dm644 -t $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT package.json LICENSE README.md v8_killer.toml
+      - cp -a --no-preserve=ownership src $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT
     sources:
       - type: git
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
