@@ -4,4 +4,4 @@ matcher.keyword = "app_launcher/index.js"
 
 [[rules.liteloaderqqnt.processors]]
 type = "insert-before"
-content = "require('/app/lib/LiteLoaderQQNT');"
+content = "require('/app/lib/node_modules/LiteLoaderQQNT');"
