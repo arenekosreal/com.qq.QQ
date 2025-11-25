@@ -183,16 +183,18 @@ modules:
   - name: liteloader
     buildsystem: simple
     build-commands:
-      - install -Dm644 -t $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT package.json LICENSE README.md v8_killer.toml
-      - cp -a --no-preserve=ownership src $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT
+      - mkdir -p $FLATPAK_DEST/lib/node_modules
+      - cp -a --no-preserve=ownership . $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT
     sources:
-      - type: git
-        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT.git
-        commit: ad10d73ad266375d22c3d971f2210d618941462e
-        tag: 1.3.0
+      - type: archive
+        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.3.0/LiteLoaderQQNT.zip
+        sha256: 00649308217a10bb191207709d7073c0ffaddb8e4e3e56ef4c152adee0f418c2
+        strip-components: 0
         x-checker-data:
-          type: git
-          tag-pattern: "^(\\d+\\.\\d+\\.\\d+)$"
+          type: json
+          url: https://api.github.com/repos/LiteLoaderQQNT/LiteLoaderQQNT/releases/latest
+          version-query: ".tag_name"
+          url-query: ".assets[] | select(.name == \"LiteLoaderQQNT.zip\") | .browser_download_url"
           is-important: true
 
       - type: file
