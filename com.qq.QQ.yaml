@@ -183,9 +183,9 @@ modules:
   - name: liteloader
     buildsystem: simple
     build-commands:
-      - mkdir -p $FLATPAK_DEST/lib/node_modules $FLATPAK_DEST/etc/v8_killer
-      - cp -a --no-preserve=ownership . $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT
-      - mv $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT/v8_killer.toml $FLATPAK_DEST/etc/v8_killer/LiteLoaderQQNT.toml
+      - mkdir -p $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT $FLATPAK_DEST/etc/v8_killer
+      - cp -a --no-preserve=ownership -t $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT LICENSE src package.json
+      - install -Dm644 v8_killer.toml $FLATPAK_DEST/etc/v8_killer/LiteLoaderQQNT.toml
     sources:
       - type: archive
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.3.0/LiteLoaderQQNT.zip
