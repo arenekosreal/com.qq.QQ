@@ -119,14 +119,6 @@ modules:
             then
               echo "User defined flags found, reading from $XDG_CONFIG_HOME/qq-flags.conf only."
               readarray -t FLAGS <"$XDG_CONFIG_HOME/qq-flags.conf"
-            elif [[ -S "$XDG_RUNTIME_DIR/${WAYLAND_SOCKET:-"wayland-0"}" ]] || [[ -S "${WAYLAND_DISPLAY:-"wayland-0"}" ]]
-            then
-              echo "Adding Wayland related flags..."
-              FLAGS+=(--ozone-platform-hint=auto --enable-wayland-ime)
-              case "$XDG_CURRENT_DESKTOP" in
-                "KDE" | "Hyprland") ;;
-                *) FLAGS+=(--wayland-text-input-version=3) ;;
-              esac
             else
               echo "Adding default flags..."
               FLAGS+=(--ozone-platform-hint=auto --enable-wayland-ime --wayland-text-input-version=3)
