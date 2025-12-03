@@ -180,8 +180,8 @@ modules:
       - install -Dm644 v8_killer.toml $FLATPAK_DEST/etc/v8_killer/LiteLoaderQQNT.toml
     sources:
       - type: archive
-        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.4.0/LiteLoaderQQNT.zip
-        sha256: d3783e995b76096eee561c7f0dee45821547efbcf313163924ed8c49261aefd5
+        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.4.1/LiteLoaderQQNT.zip
+        sha256: 3b2d9b7214bdfef16d5007b1f277a9f70688785ba11fc03ef091aa8214cdc343
         strip-components: 0
         x-checker-data:
           type: json
