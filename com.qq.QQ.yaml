@@ -198,11 +198,28 @@ modules:
       env:
         CARGO_HOME: /run/build/v8_killer/cargo
         CARGO_NET_OFFLINE: 'true'
+        RUSTFLAGS: "-L /run/build/v8_killer/frida-gum-devkit"
+        C_INCLUDE_PATH: /run/build/v8_killer/frida-gum-devkit
     sources:
       - type: git
         url: https://github.com/ShellWen/v8_killer.git
         commit: ceff3894dff0b21945a6a3072a73b4021fa9f017
 
-      - frida-gum-sys-assets.json
+      - type: patch
+        path: ./patch/v8_killer-no-auto-download.diff
+
+      - type: archive
+        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-x86_64.tar.xz
+        sha256: 65c8b91600028beb26204304f6f1ab25a9677fbe0bbfb94b71035fbb97765c5f
+        dest: frida-gum-devkit
+        only-arches:
+          - x86_64
+
+      - type: archive
+        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-arm64.tar.xz
+        sha256: b64d38cfc9375c2380a107d6f09fd44aa41cb782cd2c10319de4ec9c2003c47b
+        dest: frida-gum-devkit
+        only-arches:
+          - aarch64
 
       - cargo-sources.json
