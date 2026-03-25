@@ -1,0 +1,70 @@
+name: Initialize Flatpak OSTree repo
+description: Initialize an empty Flatpak OSTree repository
+inputs:
+  url:
+    description: The url to the repository
+    required: true
+  path:
+    description: The path of the repository.
+    required: false
+    default: ${{ github.workspace }}
+  gpg-sign:
+    description: The GnuPG key id to sign the repository.
+    required: false
+  title:
+    description: The title of the repository.
+    required: false
+  comment:
+    description: The comment of the repository.
+    required: false
+  description:
+    description: The description of the repository.
+    required: false
+  homepage:
+    description: The homepage of the repository.
+    required: false
+  icon:
+    description: The url to the icon of the repository.
+    required: false
+  default-branch:
+    description: The default branch of the repository
+    required: false
+outputs:
+  flatpakrepo:
+    description: The content of the .flatpakrepo file about this repository.
+    value: ${{ steps.flatpakrepo.outputs.flatpakrepo }}
+runs:
+  using: composite
+  steps:
+    - name: Initialize ostree repository
+      run: ostree init --mode=archive-z2 --repo='${{ inputs.path }}'
+      shell: bash
+    - name: Update summary
+      run: |
+        args=()
+        '${{ !! inputs.gpg-sign }}' && args+=('--gpg-sign=${{ inputs.gpg-sign }}')
+        '${{ !! inputs.title }}' && args+=('--title=${{ inputs.title }}')
+        '${{ !! inputs.comment }}' && args+=('--comment=${{ inputs.comment }}')
+        '${{ !! inputs.description }}' && args+=('--description=${{ inputs.description }}')
+        '${{ !! inputs.homepage }}' && args+=('--homepage=${{ inputs.homepage }}')
+        '${{ !! inputs.icon }}' && args+=('--icon=${{ inputs.icon }}')
+        '${{ !! inputs.default-branch }}' && args+=('--default-branch=${{ inputs.default-branch }}')
+        flatpak build-update-repo "${args[@]}" '${{ inputs.path }}'
+      shell: bash
+    - name: Generate flatpakrepo
+      id: flatpakrepo
+      run: |
+        {
+          EOF="$(dd if=/dev/urandom bs=15 count=1 status=none | base64)"
+          echo "flatpakrepo<<$EOF"
+          echo '[Flatpak Repo]'
+          '${{ !! inputs.title }}' && echo 'Title=${{ inputs.title }}'
+          '${{ !! inputs.url }}' && echo 'Url=${{ inputs.url }}'
+          '${{ !! inputs.homepage }}' && echo 'Homepage=${{ inputs.homepage }}'
+          '${{ !! inputs.comment }}' && echo 'Comment=${{ inputs.comment }}'
+          '${{ !! inputs.description }}' && echo 'Description=${{ inputs.description }}'
+          '${{ !! inputs.icon }}' && echo 'Icon=${{ inputs.icon }}'
+          '${{ !! inputs.gpg-sign }}' && echo "GPGKey=$(gpg --batch --yes --export '${{ inputs.gpg-sign }}' | base64 --wrap=0)"
+          echo "$EOF"
+        } >> "$GITHUB_OUTPUT"
+      shell: bash
