@@ -1,0 +1,43 @@
+name: Import GPG private key
+description: Import GPG private key and cache the passphrase if possible
+inputs:
+  private-key-keygrip:
+    description: The keygrip of the private key
+    required: true
+  private-key:
+    description: The exported private key.
+    required: true
+  private-key-passphrase:
+    description: The passphrase of the private key.
+    required: false
+outputs:
+  fingerprint:
+    description: The fingerprint of the public key of the private key
+    value: ${{ steps.import-gpg.outputs.fingerprint }}
+runs:
+  using: composite
+  steps:
+    - name: Initialize gpg
+      run: gpg --list-keys --with-keygrip
+      shell: bash
+    - name: Enable passphrase caching
+      run: |
+        echo "allow-preset-passphrase" >> ~/.gnupg/gpg-agent.conf
+        gpg-connect-agent reloadagent /bye
+      shell: bash
+    - name: Cache the passphrase
+      if: inputs.private-key-passphrase
+      run: |
+        /usr/libexec/gpg-preset-passphrase --preset '${{ inputs.private-key-keygrip }}' <<< '${{ inputs.private-key-passphrase }}'
+      shell: bash
+    - name: Import private key
+      id: import-gpg
+      run: |
+        {
+          echo -n fingerprint=
+          gpg --batch --yes --import --import-options import-show --with-colons <<< '${{ inputs.private-key }}' | grep '^sec' | cut -d : -f 5
+        } >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: Show imported key
+      run: gpg --batch --yes --list-secret-keys --with-keygrip --with-fingerprint
+      shell: bash
