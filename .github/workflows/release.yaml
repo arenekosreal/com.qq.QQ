@@ -1,0 +1,152 @@
+name: Build/Release flatpak bundles and repository
+on:
+  pull_request:
+    branches:
+      - liteloader
+  push:
+    branches:
+      - liteloader
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build flatpak manifest
+    runs-on: ${{ matrix.context.runs-on }}
+    container:
+      # https://github.com/flatpak/flatpak-github-actions?tab=readme-ov-file#docker-image
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        context:
+          - runs-on: ubuntu-24.04
+            arch: x86_64
+          - runs-on: ubuntu-24.04-arm
+            arch: aarch64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import GPG private key
+        id: import-gpg
+        uses: ./.github/actions/import-gpg
+        with:
+          private-key-keygrip: ${{ vars.GPG_KEYGRIP }}
+          private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          private-key-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSWORD }}
+
+      - name: Build
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: com.qq.QQ-${{ matrix.context.arch }}.flatpak
+          manifest-path: com.qq.QQ.yaml
+          arch: ${{ matrix.context.arch }}
+          branch: ${{ github.ref == 'refs/heads/liteloader' && github.ref_name || 'liteloader' }}
+          gpg-sign: ${{ steps.import-gpg.outputs.fingerprint }}
+
+  repository:
+    name: Generate flatpak repository
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+            com.qq.QQ.png
+
+      - name: Get bundles
+        uses: actions/download-artifact@v8
+        with:
+          pattern: com.qq.QQ-*.flatpak
+          merge-multiple: true
+
+      - name: Import GPG private key
+        id: import-gpg
+        uses: ./.github/actions/import-gpg
+        with:
+          private-key-keygrip: ${{ vars.GPG_KEYGRIP }}
+          private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          private-key-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSWORD }}
+
+      - name: Restore cached repository
+        id: cache
+        uses: actions/cache@v5
+        with:
+          key: flatpak-repository
+          path: repo
+
+      - name: Setup Pages
+        id: configure-pages
+        uses: actions/configure-pages@v5
+
+      - name: Initialize empty flatpak repository
+        if: steps.cache.outputs.cache-hit != 'true'
+        id: init-repo
+        uses: ./.github/actions/initialize-flatpak-ostree-repo
+        with:
+          url: ${{ steps.configure-pages.outputs.base_url }}
+          path: repo
+          gpg-sign: ${{ steps.import-gpg.outputs.fingerprint }}
+          title: Linux QQ NT
+          comment: Flatpak repository for Linux QQ NT
+          description: Flatpak repository for Linux QQ NT with some customizations.
+          homepage: ${{ steps.configure-pages.outputs.base_url }}
+          icon: ${{ steps.configure-pages.outputs.base_url }}/logo.png
+
+      - name: Save generated flatpakrepo file
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cat > "repo/com.qq.QQ.flatpakrepo" <<EOF
+          ${{ steps.init-repo.outputs.flatpakrepo }}
+          EOF
+
+      - name: Generate static assets
+        run: |
+          cp com.qq.QQ.png repo/logo.png
+          sed -e 's|@PAGES_URL@|${{ steps.configure-pages.outputs.base_url }}|g' \
+              -e 's|@REPOSITORY_URL@|${{ github.server_url }}/${{ github.repository }}|' \
+              -e 's|@REPOSITORY_AUTHOR@|${{ github.repository_owner }}|g' \
+              .github/pages/index.html.in > repo/index.html
+
+      - name: Import flatpak
+        run: |
+          for f in com.qq.QQ-*.flatpak
+          do
+            flatpak build-import-bundle --gpg-sign='${{ steps.import-gpg.outputs.fingerprint }}' 'repo' "$f"
+          done
+
+      - name: Update repository
+        run: |
+          flatpak build-update-repo --gpg-sign='${{ steps.import-gpg.outputs.fingerprint }}' \
+            --generate-static-deltas --prune --prune-depth=3 'repo'
+
+      - name: List repository
+        run: ls -l repo
+
+      - name: Upload pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: repo
+
+  release:
+    name: Release flatpak manifest
+    if: github.event_name == 'push'
+    needs: repository
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy pages
+        id: deployment
+        uses: actions/deploy-pages@v4
