@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="@REPOSITORY_AUTHOR@">
+  <meta name="description" content="Documentation about generated flatpak ostree repository in github pages.">
+  <meta name="color-scheme" content="light dark">
+  <title>Flatpak Repository Usage</title>
+</head>
+
+<body>
+  <main>
+    <div id="root">
+      <h1 class="title">Flatpak repository for @REPOSITORY_URL@</h1>
+      <div>
+        <h2 class="content" id="usage">Usage:</h2>
+        <p>You can run those commands to add this repository to your flatpak and install:</p>
+        <pre>
+          <code>
+            flatpak remote-add liteloader @PAGES_URL@/com.qq.QQ.flatpakrepo
+            flatpak install com.qq.QQ # Select the one from `liteloader` remote if prompted
+          </code>
+        </pre>
+        <p>Or you can download built flatpak bundles from <a
+            href="@REPOSITORY_URL@/actions/workflows/release.yaml?query=is%3Asuccess">Github Action Artifacts</a>
+          and install them manually:</p>
+        <pre>
+          <code>
+            flatpak install /path/to/bundle.flatpak
+          </code>
+        </pre>
+        <p>Please note that manually installing cannot provide automatical updates.
+          You have to update them manually by downloading new version and install again.</p>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
