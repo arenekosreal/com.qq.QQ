@@ -12,7 +12,7 @@ This is a third-party program which allows you load plugins to extend QQ and rem
 
 ### Unsafe permissions removed
 
-Unsafe permissions like accessing `/tmp` of host, or using `--device=all` are removed.
+Unsafe permissions like using `--device=all` are removed.
 Most of those should be performed through xdg-desktop-portal instead using those permissions.
 
 ## Disadvantages
@@ -45,15 +45,12 @@ But that is going to be a hard story because you have to build mozjs, which buil
 ### Camera
 
 Due to that QQ access camera devices directly and we only expose `--device=dri`, QQ will not find your camera devices.
-We will test adding `--device=usb` as many of those camera devices are connected to host through USB bus, 
-even integrated one. But `--device=usb` is only available since flatpak version 1.15.11 so you have to wait for some time.
 If you still want to use camera, you can revert 
 [1b4f106](https://github.com/arenekosreal/com.qq.QQ/commit/1b4f1062bc786f4dbc34f0d11667d4ad7a91456f) and rebuild 
-the modified manifest with flatpak-builder.
+the modified manifest with flatpak-builder or use `flatpak override` to use `--device=all` again.
 
-Update: We found that QQ still cannot found integrated camera even `--device=usb` is added. What's more, 
-according to [here](https://github.com/flatpak/flatpak/issues/1715), using pipewire is prefered to access
-video devices. So we think if you still want to using camera, you have to revert commit mentioned above.
+According to [here](https://github.com/flatpak/flatpak/issues/1715), using pipewire is prefered to access video devices.
+So we think if you still want to using camera, you have to revert commit mentioned above or use `flatpak override` to open devices.
 
 P.S: You can check [here](https://github.com/electron/electron/issues/42608) for more info.
 
