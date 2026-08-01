@@ -179,6 +179,8 @@ modules:
       - mkdir -p $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT $FLATPAK_DEST/etc/v8_killer
       - cp -a --no-preserve=ownership -t $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT LICENSE src package.json
       - install -Dm644 v8_killer.toml $FLATPAK_DEST/etc/v8_killer/LiteLoaderQQNT.toml
+      # https://t.me/LiteLoaderQQNT/1/386748
+      - sed -i '104 s/dirent.path/dirent.parentPath/' $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT/src/main/store.js
     sources:
       - type: archive
         url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.4.1/LiteLoaderQQNT.zip
