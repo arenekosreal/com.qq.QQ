@@ -3,9 +3,6 @@ runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 branch: liteloader
-sdk-extensions:
-  - org.freedesktop.Sdk.Extension.rust-stable
-  - org.freedesktop.Sdk.Extension.llvm20
 base: org.electronjs.Electron2.BaseApp
 base-version: '25.08'
 command: qq
@@ -100,8 +97,6 @@ modules:
     sources:
       - type: script
         commands:
-          - export V8_KILLER_CONFIG_FILE_PATH="/app/etc/v8_killer/LiteLoaderQQNT.toml"
-          - export ZYPAK_LD_PRELOAD="/app/lib/v8_killer/libv8_killer_core.so"
           - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
           - export LITELOADERQQNT_PROFILE="$XDG_CONFIG_HOME/LiteLoaderQQNT"
           - declare -a FLAGS
@@ -135,6 +130,9 @@ modules:
           - bsdtar --to-stdout -xf qq.deb data.* | bsdtar -xf -
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
+          - loader="$(dd if=/dev/urandom bs=15 count=1 status=none | base64 | sed 's|/|_|g;s|+|-|g')"
+          - echo "require('/app/lib/node_modules/LiteLoaderQQNT');" > "./QQ/resources/app/app_launcher/$loader.js"
+          - sed -i "s|./application.asar/app_launcher/index.js|./app_launcher/$loader.js|" ./QQ/resources/app/package.json
         dest-filename: apply_extra
 
       - type: file
@@ -176,9 +174,8 @@ modules:
   - name: liteloader
     buildsystem: simple
     build-commands:
-      - mkdir -p $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT $FLATPAK_DEST/etc/v8_killer
+      - mkdir -p $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT
       - cp -a --no-preserve=ownership -t $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT LICENSE src package.json
-      - install -Dm644 v8_killer.toml $FLATPAK_DEST/etc/v8_killer/LiteLoaderQQNT.toml
       # https://t.me/LiteLoaderQQNT/1/386748
       - sed -i '104 s/dirent.path/dirent.parentPath/' $FLATPAK_DEST/lib/node_modules/LiteLoaderQQNT/src/main/store.js
     sources:
@@ -192,46 +189,3 @@ modules:
           version-query: ".tag_name"
           url-query: ".assets[] | select(.name == \"LiteLoaderQQNT.zip\") | .browser_download_url"
           is-important: true
-
-      - type: file
-        path: v8_killer.toml
-
-  - name: v8_killer
-    buildsystem: simple
-    build-commands:
-      - cargo fetch --offline --manifest-path Cargo.toml --verbose
-      - cargo build --offline --release --all-features
-      - install -Dm644 target/release/libv8_killer_core.so $FLATPAK_DEST/lib/v8_killer/libv8_killer_core.so
-      - install -Dm755 target/release/v8_killer_launcher $FLATPAK_DEST/lib/v8_killer/v8_killer_launcher
-      - mkdir -p $FLATPAK_DEST/bin
-      - ln -srfv $FLATPAK_DEST/lib/v8_killer/v8_killer_launcher $FLATPAK_DEST/bin/v8_killer_launcher
-    build-options:
-      append-path: "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm20/bin"
-      env:
-        CARGO_HOME: /run/build/v8_killer/cargo
-        CARGO_NET_OFFLINE: 'true'
-        RUSTFLAGS: "-L /run/build/v8_killer/frida-gum-devkit"
-        C_INCLUDE_PATH: /run/build/v8_killer/frida-gum-devkit
-    sources:
-      - type: git
-        url: https://github.com/ShellWen/v8_killer.git
-        commit: ceff3894dff0b21945a6a3072a73b4021fa9f017
-
-      - type: patch
-        path: ./patch/v8_killer-no-auto-download.diff
-
-      - type: archive
-        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-x86_64.tar.xz
-        sha256: 65c8b91600028beb26204304f6f1ab25a9677fbe0bbfb94b71035fbb97765c5f
-        dest: frida-gum-devkit
-        only-arches:
-          - x86_64
-
-      - type: archive
-        url: https://github.com/frida/frida/releases/download/16.6.6/frida-gum-devkit-16.6.6-linux-arm64.tar.xz
-        sha256: b64d38cfc9375c2380a107d6f09fd44aa41cb782cd2c10319de4ec9c2003c47b
-        dest: frida-gum-devkit
-        only-arches:
-          - aarch64
-
-      - cargo-sources.json
