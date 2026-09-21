@@ -1,5 +1,6 @@
 #!/bin/bash
 export TMPDIR="${XDG_RUNTIME_DIR}/app/${FLATPAK_ID}"
+export LITELOADERQQNT_PROFILE="${XDG_CONFIG_HOME}/LiteLoaderQQNT"
 
 FLAGS=()
 
